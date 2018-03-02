@@ -95,12 +95,9 @@ function renderProductDetails(productId) {
     i.getProduct.call(productId).then(function(p) {
      console.log(p);
      let content = "";
-     ipfs.cat(p[4]).then(function(stream) {
-     stream.on('data', function(chunk) {
-      // do stuff with this chunk of data
-      content += chunk.toString();
-      $("#product-desc").append("<div>" + content+ "</div>");
-      })
+     ipfs.cat(p[4]).then(function(file) {
+       content = file.toString();
+       $("#product-desc").append("<div>" + content+ "</div>");
      });
  
      $("#product-image").append("<img src='https://ipfs.io/ipfs/" + p[3] + "' width='250px' />");
@@ -230,7 +227,7 @@ window.App = {
       ).catch(function(e) {
        console.log(e);
        $("#msg").show();
-       $("#msg").html("The auction can not be finalized by the buyer or seller, only a third party aribiter can finalize it");
+       $("#msg").html("The auction can not be finalized by the buyer or seller, only a third party arbiter can finalize it");
       })
       });
       event.preventDefault();
