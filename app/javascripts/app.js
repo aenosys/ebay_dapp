@@ -13,22 +13,47 @@ const ethUtil = require('ethereumjs-util');
 
 const ipfs = ipfsAPI({host: 'localhost', port: '5001', protocol: 'http'});
 
-function renderStore() {
-  EcommerceStore.deployed().then(function(i) {
-    i.getProduct.call(1).then(function(p) {
-      $("#product-list").append(buildProduct(p));
-    });
+const offchainServer = "http://localhost:3000";
+const categories = ["Art","Books","Cameras","Cell Phones & Accessories","Clothing","Computers & Tablets","Gift Cards & Coupons","Musical Instruments & Gear","Pet Supplies","Pottery & Glass","Sporting Goods","Tickets","Toys & Hobbies","Video Games"];
 
-    i.getProduct.call(2).then(function(p) {
-      $("#product-list").append(buildProduct(p));
+function renderProducts(div, filters) {
+  $.ajax({
+   url: offchainServer + "/products",
+   type: 'get',
+   contentType: "application/json; charset=utf-8",
+   data: filters
+  }).done(function(data) {
+   if (data.length == 0) {
+    $("#" + div).html('No products found');
+   } else {
+    $("#" + div).html('');
+   }
+   while(data.length > 0) {
+    let chunks = data.splice(0, 4);
+    let row = $("<div/>");
+    row.addClass("row");
+    chunks.forEach(function(value) {
+     let node = buildProduct(value);
+     row.append(node);
     })
+    $("#" + div).append(row);
+   }
   })
 }
+
+function renderStore() {
+  renderProducts("product-list", {});
+  renderProducts("product-reveal-list", {productStatus: "reveal"});
+  renderProducts("product-finalize-list", {productStatus: "finalize"});
+  categories.forEach(function(value) {
+   $("#categories").append("<div>" + value + "");
+  })
+ }
 
 function buildProduct(product) {
   let node = $("<div/>");
   node.addClass("col-sm-3 text-center col-margin-bottom-1");
-  node.append("<img src='https://ipfs.io/ipfs/" + product[3] + "' width='150px' />");
+  node.append("<img src='http://localhost:8000/" + product[3] + "' width='150px' />");
   node.append("<div>" + product[1]+ "</div>");
   node.append("<div>" + product[2]+ "</div>");
   node.append("<div>" + product[5]+ "</div>");

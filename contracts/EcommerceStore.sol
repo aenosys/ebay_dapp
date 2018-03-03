@@ -3,6 +3,8 @@ pragma solidity ^0.4.17;
 import "contracts/Escrow.sol";
 
 contract EcommerceStore {
+  event NewProduct(uint _productId, string _name, string _category, string _imageLink, string _descLink, uint _auctionStartTime, uint _auctionEndTime, uint _startPrice, uint _productCondition);
+
   enum ProductStatus { Open, Sold, Unsold }
   enum ProductCondition { New, Used }
 
@@ -49,6 +51,8 @@ contract EcommerceStore {
 
     stores[msg.sender][productIndex] = product;
     productIdInStore[productIndex] = msg.sender;
+
+    NewProduct(productIndex, _name, _category, _imageLink, _descLink, _auctionStartTime, _auctionEndTime, _startPrice, _productCondition);
   }
 
   function getProduct(uint _productId) view public returns (uint, string, string, string, string, uint, uint, uint, ProductStatus, ProductCondition) {
