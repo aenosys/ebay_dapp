@@ -68,25 +68,29 @@ function saveProduct(product) {
 }
 
 app.get('/products', function(req, res) {
-    current_time = Math.round(new Date() / 1000);
-    query = { productStatus: {$eq: 0} }
+    current_time = math.round(new date() / 1000);
+    query = { productstatus: {$eq: 0} }
 
-    if (Object.keys(req.query).length === 0) {
-        query['auctionEndTime'] = {$gt: current_time}
+    if (object.keys(req.query).length === 0) {
+        query['auctionendtime'] = {$gt: current_time}
     } else if (req.query.category !== undefined) {
-        query['auctionEndTime'] = {$gt: current_time}
+        query['auctionendtime'] = {$gt: current_time}
         query['category'] = {$eq: req.query.category}
-    } else if (req.query.productStatus !== undefined) {
-        if (req.query.productStatus == "reveal") {
-            query['auctionEndTime'] = {$lt: current_time, $gt: current_time - (60*60)}
-        } else if (req.query.productStatus == "finalize") {
-            query['auctionEndTime'] = { $lt: current_time - (60*60) }
-            query['productStatus'] = {$eq: 0}
+    } else if (req.query.productstatus !== undefined) {
+        if (req.query.productstatus == "reveal") {
+            query['auctionendtime'] = {$lt: current_time, $gt: current_time - (60*60)}
+        } else if (req.query.productstatus == "finalize") {
+            query['auctionendtime'] = { $lt: current_time - (60*60) }
+            query['productstatus'] = {$eq: 0}
         }
     }
 
-    ProductModel.find(query, null, {sort: 'auctionEndTime'}, function (err, items) {
-        console.log("Total items founds: " + items.length);
+    productmodel.find(query, null, {sort: 'auctionendtime'}, function (err, items) {
+        console.log("total items founds: " + items.length);
         res.send(items);
     })
+});
+
+app.get('/product', function(req, res) {
+    // Return product with specific id
 });
